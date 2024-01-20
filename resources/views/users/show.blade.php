@@ -29,6 +29,14 @@
                             {{ __('Edit') }}
                         </x-button>
                     </a>
+
+                    <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <x-danger-button class="ml-3" type="submit">
+                            {{ __('Delete') }}
+                        </x-danger-button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -6,19 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Actions\Jetstream\DeleteUser;
 
 class UserController extends Controller
 {
     protected $creator;
     protected $updater;
+    protected $deleter;
 
     /**
      * Dependency Injection via Constructor
      */    
-    public function __construct(CreateNewUser $creator, UpdateUserProfileInformation $updater)
+    public function __construct(CreateNewUser $creator, 
+                                UpdateUserProfileInformation $updater, 
+                                DeleteUser $deleter)
     {
         $this->creator = $creator;
         $this->updater = $updater;
+        $this->deleter = $deleter;
     }
 
     /**
@@ -85,6 +90,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        $this->deleter->delete($user);
+        return redirect()->route('users.index');
     }
 }
