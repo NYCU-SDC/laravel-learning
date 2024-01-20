@@ -28,6 +28,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('users', UserController::class)->names([
-        'index' => 'users.index'
+        'index' => 'users.index', 
+        'create' => 'users.create'
     ]);
 });

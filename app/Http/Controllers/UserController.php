@@ -4,9 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Actions\Fortify\CreateNewUser;
 
 class UserController extends Controller
 {
+    protected $creator;
+
+    /**
+     * Dependency Injection via Constructor
+     */    
+    public function __construct(CreateNewUser $creator)
+    {
+        $this->creator = $creator;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +33,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
@@ -30,7 +41,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $arrayData = $request->all();
+
+        $this->creator->create($arrayData);
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -38,7 +53,9 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::find($id);
+        $parameters = ['user' => $user];
+        return view('users.show', $parameters);
     }
 
     /**
