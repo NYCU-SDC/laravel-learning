@@ -5,17 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Actions\Fortify\CreateNewUser;
+use App\Actions\Fortify\UpdateUserProfileInformation;
 
 class UserController extends Controller
 {
     protected $creator;
+    protected $updater;
 
     /**
      * Dependency Injection via Constructor
      */    
-    public function __construct(CreateNewUser $creator)
+    public function __construct(CreateNewUser $creator, UpdateUserProfileInformation $updater)
     {
         $this->creator = $creator;
+        $this->updater = $updater;
     }
 
     /**
@@ -42,9 +45,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $arrayData = $request->all();
-
         $this->creator->create($arrayData);
-
         return redirect()->route('users.index');
     }
 
@@ -63,7 +64,9 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::find($id);
+        $parameters = ['user' => $user];
+        return view('users.edit', $parameters);
     }
 
     /**
@@ -71,7 +74,10 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $arrayData = $request->all();
+        $this->updater->update($user, $arrayData);
+        return redirect()->route('users.show', $user->id);
     }
 
     /**
